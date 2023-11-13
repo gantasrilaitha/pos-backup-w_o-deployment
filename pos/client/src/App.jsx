@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import Signup from './Signup'
 import Choose from './Choose'
 import Success from './Success'
+import AdminSignup from './AdminSignup'
+import AdminApp from './AdminSuccess'
 function App() {
 
   return (
@@ -17,6 +19,8 @@ function App() {
     <Route path ='/' element={<Choose />}></Route>
       <Route path ='/signup' element={<Signup />}></Route>
       <Route path ='/success' element={<Success />}></Route>
+      <Route path ='/adminsignup' element={<AdminSignup />}></Route>
+      <Route path ='/adminsuccess' element={<AdminApp />}></Route>
     </Routes>
     
     </BrowserRouter>

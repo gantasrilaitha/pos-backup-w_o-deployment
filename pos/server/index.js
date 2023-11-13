@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const StaffModel=require('./models/Staff');
 const ItemModel = require('./models/Img');
 const BillingModel = require('./models/Billing');
-
+const AdminModel=require('./models/Admin');
 const cors = require('cors');
 const app=express()
 
@@ -25,7 +25,8 @@ app.post('/saveBillingData', async (req, res) => {
     try {
       const { terminalNo, paymentMethod, totalCost } = req.body;
       const collectionExists = await mongoose.connection.db.listCollections({
-        name: 'BillingCollection',
+        //name: 'BillingCollection',
+        name: 'billings',
       }).hasNext();
       if (!collectionExists) {
         await mongoose.connection.db.createCollection('Billing');
@@ -120,8 +121,82 @@ app.post('/detail',(req,res)=>{
     })
 })
 
+app.post('/admindetail',(req,res)=>{
+  const {username,password}= req.body;
+  //console.log(String(req.body.username));
+  //password.toString()
+  AdminModel.findOne({username: username})
+  .then(user => {console.log(user)
+      if(user){
+          if (user.password===password){
+              res.json("Success")
+          }else{
+              res.json("INVALID LOGIN")
+          }
+      }else{console.log("errrr");
+          res.json("invalid");
+      }
+  })
+  .catch((err) => {
+      console.error("Error occurred:", err); // Log any errors that occur during the query
+      res.status(500).json("Internal Server Error"); // Return an error response to the client
+  })
+})
 
-  
+app.get('/billing', async (req, res) => {
+  try {
+    const billingData = await BillingModel.find();
+
+    const terminalCostMap = {};
+    billingData.forEach((record) => {
+      const { terminalNo, totalCost } = record;
+      if (!terminalCostMap[terminalNo]) {
+        terminalCostMap[terminalNo] = 0;
+      }
+      terminalCostMap[terminalNo] += totalCost;
+    });
+
+    const result = Object.entries(terminalCostMap).map(([terminalNo, totalCost]) => ({
+      terminalNo,
+      totalCost,
+    }));
+    //console.log(result);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+app.get('/products', async (req, res) => {
+  try {
+    const itemsData = await ItemModel.find();
+    const products = itemsData.map(item => ({
+      pname: item.pname,
+      sale: parseInt(item.originalqty,10)-parseInt(item.qty,10)
+    }));
+    //console.log(products);
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.get('/low-quantity-items', async (req, res) => {
+  try {
+    const threshold = '10'; // Set your specific threshold here
+    const lowQuantityItems = await ItemModel.find({
+      $expr: { $lt: [ { $toInt: "$qty" }, { $toInt: threshold } ] }
+    });
+    console.log(lowQuantityItems);
+    res.json(lowQuantityItems);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(3001,()=>{
     console.log('server is running')
