@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "651ffe6b416409aa103ed18f"
+  },
+  "terminalNo": "terminal2",
+  "paymentMethod": "credit",
+  "totalCost": 210,
+  "timestamp": {
+    "$date": {
+      "$numberLong": "1696595563833"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "651fffe6c843b85c3623ba38"
+  },
+  "terminalNo": "terminal2",
+  "paymentMethod": "credit",
+  "totalCost": 212,
+  "timestamp": {
+    "$date": {
+      "$numberLong": "1696595942289"
+    }
+  },
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "65200572c843b85c3623ba43"
+  },
+  "terminalNo": "terminal2",
+  "paymentMethod": "cash",
+  "totalCost": 210,
+  "timestamp": {
+    "$date": {
+      "$numberLong": "1696597362050"
+    }
+  },
+  "__v": 0
+}]
